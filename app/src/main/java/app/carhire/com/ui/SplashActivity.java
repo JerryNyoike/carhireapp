@@ -1,9 +1,11 @@
-package app.carhire.com;
+package app.carhire.com.ui;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import app.carhire.com.R;
 
 public class SplashActivity extends AppCompatActivity {
 

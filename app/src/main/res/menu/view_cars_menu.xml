@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/post_car"
+        android:title="@string/review_account"
+        android:icon="@drawable/ic_action_add"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/review_account"
+        android:title="@string/review_account"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/exit"
+        android:title="@string/exit"
+        app:showAsAction="never"/>
+
+</menu>

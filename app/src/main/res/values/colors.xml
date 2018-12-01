@@ -5,6 +5,7 @@
     <color name="colorSecondary">#90ee02</color>
     <color name="colorAccent">#ee0290</color>
     <color name="colorPrimaryText">#2d2d30</color>
+    <color name="colorSecondaryText">#716f6f</color>
     <color name="white">#ffffff</color>
     <color name="black">#000</color>
     <color name="overlay">#5a2d2d30</color>

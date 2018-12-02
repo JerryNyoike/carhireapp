@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "293792970507-pkilbr8qf226nq5hnn5c4e25hrbies3u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.carhire.com",
+            "certificate_hash": "47d7954f817fca25880f70740e9f6ff5db5cdd59"
+          }
+        },
+        {
           "client_id": "293792970507-rq1mnhlgdnbglrac9iksmsgequtji8in.apps.googleusercontent.com",
           "client_type": 3
         }

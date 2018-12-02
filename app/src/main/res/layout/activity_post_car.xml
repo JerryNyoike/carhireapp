@@ -32,19 +32,20 @@
                 <ImageView
                     android:id="@+id/display_image"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:src="@drawable/car1"
+                    android:layout_height="220dp"
+                    android:src="@drawable/car_placeholder"
                     android:scaleType="centerCrop"
                     android:visibility="visible"
                     android:foreground="@color/overlay"/>
 
                 <TextView
+                    android:id="@+id/pick_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/pick_display_pic"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:gravity="center"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textSize="13sp"
+                    android:gravity="bottom|center"
                     android:padding="10dp"/>
 
             </FrameLayout>
@@ -61,44 +62,44 @@
                 android:paddingEnd="0dp"/>
 
             <EditText
-                android:id="@+id/car_model"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/car_model"
-                android:textColorHint="@color/colorPrimaryText"
-                android:textColor="@color/colorPrimaryText"
-                android:textSize="16sp"
-                android:padding="10dp"
-                android:layout_margin="10dp"/>
-
-            <EditText
                 android:id="@+id/car_make"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/car_make"
-                android:textColorHint="@color/colorPrimaryText"
+                android:textColorHint="@color/colorSecondaryText"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="16sp"
                 android:padding="10dp"
                 android:layout_margin="10dp"/>
 
             <EditText
-                android:id="@+id/car_fuel_type"
+                android:id="@+id/car_model"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/car_model"
+                android:textColorHint="@color/colorSecondaryText"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_margin="10dp"/>
+
+            <EditText
+                android:id="@+id/fuel_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/car_fuel_type"
-                android:textColorHint="@color/colorPrimaryText"
+                android:textColorHint="@color/colorSecondaryText"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="16sp"
                 android:padding="10dp"
                 android:layout_margin="10dp"/>
 
             <EditText
-                android:id="@+id/car_engine"
+                android:id="@+id/engine_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/car_engiene"
-                android:textColorHint="@color/colorPrimaryText"
+                android:textColorHint="@color/colorSecondaryText"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="16sp"
                 android:padding="10dp"
@@ -109,7 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/car_transmission"
-                android:textColorHint="@color/colorPrimaryText"
+                android:textColorHint="@color/colorSecondaryText"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="16sp"
                 android:padding="10dp"
@@ -120,30 +121,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/car_capacity"
-                android:textColorHint="@color/colorPrimaryText"
+                android:textColorHint="@color/colorSecondaryText"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="16sp"
                 android:padding="10dp"
                 android:layout_margin="10dp"/>
 
             <EditText
-                android:id="@+id/car_rate"
+                android:id="@+id/car_accessories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/car_rate"
-                android:textColorHint="@color/colorPrimaryText"
+                android:hint="@string/any_other_accessories"
+                android:textColorHint="@color/colorSecondaryText"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:layout_margin="10dp"/>
+
+            <EditText
+                android:id="@+id/hire_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hire_rate"
+                android:textColorHint="@color/colorSecondaryText"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="16sp"
                 android:padding="10dp"
                 android:layout_margin="10dp"/>
 
             <Button
+                android:id="@+id/submit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/submit"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:background="@color/colorPrimary"/>
+                android:background="@color/colorPrimary"
+                android:layout_margin="10dp"
+                android:padding="10dp"/>
 
         </LinearLayout>
 

@@ -14,10 +14,14 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        //new instance of handler class
+        //post delayed method runs code in the run method after given milliseconds are over
+        //i.e in this cae open second activity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this,PostCar.class));
+                startActivity(new Intent(SplashActivity.this,ViewCars.class));
+                finish();
             }
         },2000);
     }

@@ -36,9 +36,6 @@ public class LoginActivity extends AppCompatActivity {
         tvRegister = findViewById(R.id.tvRegister);
         mAuth = FirebaseAuth.getInstance();
 
-        email = etEmail.getText().toString().trim();
-        password = etPassword.getText().toString().trim();
-
         tvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,21 +46,25 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(getApplicationContext(), ViewCars.class));
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                email = etEmail.getText().toString().trim();
+                password = etPassword.getText().toString().trim();
+                if(validateForm()){
+                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                startActivity(new Intent(getApplicationContext(), ViewCars.class));
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
 
-                    }
-                });
+                        }
+                    });
+                }
             }
         });
 
@@ -78,10 +79,10 @@ public class LoginActivity extends AppCompatActivity {
 
     protected boolean validateForm(){
         if(email.isEmpty()){
-            Toast.makeText(this, "Password/Email combination not found", Toast.LENGTH_SHORT).show();
+            etEmail.setError("Email can't be blank");
             return false;
         } else if (password.isEmpty()){
-            Toast.makeText(this, "Password/Email combination not found", Toast.LENGTH_SHORT).show();
+            etPassword.setError("Password can't be blank");
             return false;
         }
         return true;

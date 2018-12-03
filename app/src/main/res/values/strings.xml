@@ -20,6 +20,7 @@
     <string name="exit">Exit</string>
     <string name="welcome_user">Welcome User</string>
     <string name="no_available_vehicles">There are no available vehicles.\nPlease come back later.\nThank you for understanding</string>
+    <string name="no_rented_vehicles">You haven\'t booked any car</string>
     <string name="some_cars">Here is a list of cars available for hire</string>
     <string name="view_car">View Car</string>
 </resources>

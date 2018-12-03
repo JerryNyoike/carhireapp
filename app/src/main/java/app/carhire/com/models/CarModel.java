@@ -16,7 +16,7 @@ public class CarModel {
     private String hireRate;
     private String carAccessories;
     private String carRating;
-    private boolean booked;
+    private String booked;
 
     public CarModel() {
 
@@ -38,8 +38,9 @@ public class CarModel {
         this.hireRate = hireRate;
         this.carAccessories = carAccessories;
         this.carRating = carRating;
-        this.setBooked(false);
+        this.setBooked("available");
     }
+
 
     public void setCarId(String car_id) {
         this.car_id = car_id;
@@ -89,7 +90,7 @@ public class CarModel {
         this.carAccessories = carAccessories;
     }
 
-    public void setBooked(boolean booked) { this.booked = booked; }
+    public void setBooked(String booked) { this.booked = booked; }
 
     public void setCarRating(String carRating) {
         this.carRating = carRating;
@@ -147,5 +148,5 @@ public class CarModel {
         return carRating;
     }
 
-    public boolean getBooked(){ return this.booked; }
+    public String getBooked(){ return this.booked; }
 }

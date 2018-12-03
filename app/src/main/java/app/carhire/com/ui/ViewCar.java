@@ -1,5 +1,8 @@
 package app.carhire.com.ui;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +23,8 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import app.carhire.com.BuildConfig;
 import app.carhire.com.R;
 
 import static java.lang.Boolean.TRUE;
@@ -41,6 +47,9 @@ public class ViewCar extends AppCompatActivity {
     private String car_id, owner_id, image_url;
     private ArrayList<String> carDetails;
     private ArrayAdapter<String> adapter;
+    private FirebaseAuth mAuth;
+    private SharedPreferences sharedPref;
+    private String prefFile = BuildConfig.APPLICATION_ID + ".PREFERENCE_FILE_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +60,10 @@ public class ViewCar extends AppCompatActivity {
         car_id = getIntent().getExtras().getString("car_id");
         owner_id = getIntent().getExtras().getString("owner_id");
         image_url = getIntent().getExtras().getString("image_url");
+
+        //get userId from SharedPreferences
+        sharedPref = getApplicationContext().getSharedPreferences(prefFile, Context.MODE_PRIVATE);
+        String userId = sharedPref.getString("UserId", null);
 
         //set up toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -66,15 +79,18 @@ public class ViewCar extends AppCompatActivity {
         carDetails = new ArrayList<String>();
         adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,carDetails);
 
+
         //handle item clicks
         bookCar.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 //check if car is available for booking
                 //if available, book the car and set it to booked
+                String userId = sharedPref.getString("UserId", null);
                 loadCarDetails.setVisibility(View.VISIBLE);
-                rootDbRef.child("cars").child(car_id).child("booked").setValue(TRUE);
+                rootDbRef.child("cars").child(car_id).child("booked").setValue(userId);
                 loadCarDetails.setVisibility(View.GONE);
+                startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 //if not available inform the customer that it has been booked
             }
         });
@@ -118,7 +134,7 @@ public class ViewCar extends AppCompatActivity {
                 carDetails.add("Rating : " + dataSnapshot.child("car_rating").getValue(String.class));
                 carDetails.add("Accessories : " + dataSnapshot.child("car_accessories").getValue(String.class));
                 carDetails.add("Hiring rate : " + dataSnapshot.child("hire_rate").getValue(String.class));
-                carDetails.add("Booked : " + dataSnapshot.child("booked").getValue(Boolean.class));
+                carDetails.add("Booked : " + dataSnapshot.child("booked").getValue(String.class));
 
                 adapter.notifyDataSetChanged();
 

@@ -1,6 +1,8 @@
 package app.carhire.com.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import app.carhire.com.BuildConfig;
 import app.carhire.com.R;
 import app.carhire.com.models.ClientModel;
 
@@ -32,6 +35,8 @@ public class SignUpActivity extends AppCompatActivity {
     private String userName, email, password, confirmPassword, userType;
     private Spinner spinnerUserType;
     private String[] userTypesArray = {"Owner", "Client"};
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
 
 //    List<AuthUI.IdpConfig> providers = Arrays.asList(
 //            new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -121,7 +126,16 @@ public class SignUpActivity extends AppCompatActivity {
                                 //write user to the database
                                 String key = mDatabaseReference.push().getKey();
                                 writeNewUser(new ClientModel(key, userName, email, userType));
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+
+                                //write to shared preferences
+                                sharedPref = SignUpActivity.this.getSharedPreferences(BuildConfig.APPLICATION_ID + ".PREFERENCE_FILE_KEY",Context.MODE_PRIVATE);
+                                editor = sharedPref.edit();
+                                editor.putString("UserId", key);
+                                editor.apply();
+                                editor.putString("UserEmail", email);
+                                editor.apply();
+
+                                startActivity(new Intent(getApplicationContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                 finish();
                             } else {
                                 Toast.makeText(SignUpActivity.this, "Authentication failed.",

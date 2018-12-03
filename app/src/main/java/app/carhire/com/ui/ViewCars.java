@@ -101,13 +101,12 @@ public class ViewCars extends AppCompatActivity {
                     carModel.setCarTransmission(ds.child("car_transmission").getValue(String.class));
                     carModel.setCarRating(ds.child("car_rating").getValue(String.class));
                     carModel.setHireRate(ds.child("hire_rate").getValue(String.class));
-                    carModel.setBooked(ds.child("booked").getValue(Boolean.class));
+                    carModel.setBooked(ds.child("booked").getValue(String.class));
                     //[START] select only cars that are not booked
-                    if(carModel.getBooked()){
-                        continue;
+                    if("available".equals(carModel.getBooked())){
+                        availableCars.add(carModel);
                     }
                     //[END] select only cars that are not booked
-                    availableCars.add(carModel);
                 }
 
                 carsAdapter.notifyDataSetChanged();

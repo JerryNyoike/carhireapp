@@ -83,7 +83,7 @@ public class PostCar extends AppCompatActivity {
         rootStgRef = FirebaseStorage.getInstance().getReference();
 
         //set booking information
-        booked = FALSE.toString();
+        booked = "available";
 
         //handle item clicks
 
@@ -199,7 +199,7 @@ public class PostCar extends AppCompatActivity {
                 {
                     loadPostCar.dismiss();
                     Toast.makeText(PostCar.this, "Successfully uploaded", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(PostCar.this,ViewCars.class));
+                    startActivity(new Intent(PostCar.this,ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     finish();
                 }
                 else

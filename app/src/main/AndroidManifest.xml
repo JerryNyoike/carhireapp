@@ -13,10 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.SplashActivity"></activity>
+        <activity android:name=".ui.SplashActivity" />
         <activity android:name=".ui.PostCar" />
-        <activity android:name=".ui.SignUpActivity">
-        </activity>
+        <activity android:name=".ui.SignUpActivity"></activity>
         <activity android:name=".ui.ViewCars" />
         <activity android:name=".ui.ViewCar" />
         <activity android:name=".ui.LoginActivity">

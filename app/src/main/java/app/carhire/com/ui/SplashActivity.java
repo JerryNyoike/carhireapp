@@ -20,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this,ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                startActivity(new Intent(SplashActivity.this,LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 finish();
             }
         },2000);

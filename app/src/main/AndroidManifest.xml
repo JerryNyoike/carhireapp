@@ -16,8 +16,10 @@
         <activity android:name=".ui.SplashActivity" />
         <activity android:name=".ui.PostCar" />
         <activity android:name=".ui.SignUpActivity"></activity>
-        <activity android:name=".ui.ViewCars" />
-        <activity android:name=".ui.ViewCar" />
+        <activity android:name=".ui.ViewCars"
+            android:launchMode="singleTop"/>
+        <activity android:name=".ui.ViewCar"
+            android:launchMode="singleTop"/>
         <activity android:name=".ui.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

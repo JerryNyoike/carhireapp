@@ -63,7 +63,6 @@ public class ViewCar extends AppCompatActivity {
 
         //get userId from SharedPreferences
         sharedPref = getApplicationContext().getSharedPreferences(prefFile, Context.MODE_PRIVATE);
-        String userId = sharedPref.getString("UserId", null);
 
         //set up toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -90,8 +89,8 @@ public class ViewCar extends AppCompatActivity {
                 loadCarDetails.setVisibility(View.VISIBLE);
                 rootDbRef.child("cars").child(car_id).child("booked").setValue(userId);
                 loadCarDetails.setVisibility(View.GONE);
-                startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                //if not available inform the customer that it has been booked
+                startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
             }
         });
 

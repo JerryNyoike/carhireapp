@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,11 +36,19 @@ public class ViewCars extends AppCompatActivity {
     private ViewCarsAdapter carsAdapter;
     private ArrayList<CarModel> availableCars;
     private DatabaseReference rootDbRef;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_cars);
+        //check if user is logged in
+        mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() == null){
+            //redirect to login
+            startActivity(new Intent(ViewCars.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            finish();
+        }
 
         //set up toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);

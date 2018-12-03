@@ -41,15 +41,22 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        //if user is already logged in proceed
+        mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null){
+            startActivity(new Intent(LoginActivity.this, ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            finish();
+        }
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvRegister);
         mAuth = FirebaseAuth.getInstance();
+
+
         sharedPref = getApplicationContext().getSharedPreferences(prefFile, Context.MODE_PRIVATE);
         editor = sharedPref.edit();
-
 
         tvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putString("UserEmail", email);
                                 editor.apply();
 
-                                startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                                 finish();
                             } else {
                                 // If sign in fails, display a message to the user.
@@ -96,10 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        }
+
     }
 
     protected boolean validateForm(){

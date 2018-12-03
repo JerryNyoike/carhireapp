@@ -135,7 +135,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 editor.putString("UserEmail", email);
                                 editor.apply();
 
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                startActivity(new Intent(getApplicationContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                                 finish();
                             } else {
                                 Toast.makeText(SignUpActivity.this, "Authentication failed.",

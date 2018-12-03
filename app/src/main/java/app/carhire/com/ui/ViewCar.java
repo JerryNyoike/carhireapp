@@ -114,6 +114,7 @@ public class ViewCar extends AppCompatActivity {
         getCarDetails();
 
         //update ui
+
         if (!image_url.equals("No Image"))
         {
             Glide.with(this).load(image_url).listener(new RequestListener<Drawable>() {
@@ -132,6 +133,11 @@ public class ViewCar extends AppCompatActivity {
         }
 
         carDetailsList.setAdapter(adapter);
+
+        if(user_id.equals(owner_id))
+        {
+            bookCar.setVisibility(View.GONE);
+        }
 
     }
 
@@ -164,20 +170,25 @@ public class ViewCar extends AppCompatActivity {
 
                 if (bookedStatus != null)
                 {
+                    //check if the car is owned by current user
+                    //and if it is booked to show booker details
+                    if (user_id.equals(owner_id) && !bookedStatus.equals("available"))
+                    {
+                        booker_id = bookedStatus;
+                        getBookerDetails();
+                    }
+
+                    //check if current user has booked the car
                     if (bookedStatus.equals(user_id))
                     {
                         bookCar.setVisibility(View.GONE);
                         carDetails.add("**You have booked this car**");
                     }
-                    else if (bookedStatus.equals("available"))
+
+                    //check if the car is available for booking
+                    if (bookedStatus.equals("available"))
                     {
                         carDetails.add("Booked Status: " + bookedStatus);
-                    }
-                    else if (user_id.equals(owner_id))
-                    {
-                        booker_id = bookedStatus;
-                        bookCar.setVisibility(View.GONE);
-                        getBookerDetails();
                     }
                 }
 

@@ -55,8 +55,17 @@ public class ViewCarsAdapter extends BaseAdapter {
         String car_details = "";
         car_details = "Owner : " + availableCars.get(i).getCarOwner() + "\n";
         car_details += "Engine : " + availableCars.get(i).getEngineSize() + "\n";
-        car_details += "Transmission : " + availableCars.get(i).getCarTransmission() + "\n";
-        car_details += "Hire rate : " + availableCars.get(i).getHireRate();
+        car_details += "Capacity : " + availableCars.get(i).getCarCapacity() + "\n";
+
+        if (availableCars.get(i).getHireRate().equals("You have booked this car"))
+        {
+            car_details += "**" + availableCars.get(i).getHireRate() + "**";
+        }
+        else
+        {
+            car_details += "Hire rate : " + availableCars.get(i).getHireRate();
+        }
+
         String image_url = availableCars.get(i).getImageUrl();
         String rating = availableCars.get(i).getCarRating();
 

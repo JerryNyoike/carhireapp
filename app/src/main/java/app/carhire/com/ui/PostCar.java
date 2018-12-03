@@ -4,8 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.net.Uri;
@@ -37,6 +39,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.Map;
 
+import app.carhire.com.BuildConfig;
 import app.carhire.com.R;
 
 import app.carhire.com.R;
@@ -55,6 +58,8 @@ public class PostCar extends AppCompatActivity {
     private StorageReference rootStgRef;
     private ProgressDialog loadPostCar;
     private String booked;
+    private SharedPreferences sharedPreferences;
+    private String prefFile = BuildConfig.APPLICATION_ID + ".PREFERENCE_FILE_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +86,7 @@ public class PostCar extends AppCompatActivity {
         loadPostCar = new ProgressDialog(this);
         rootDbRef = FirebaseDatabase.getInstance().getReference();
         rootStgRef = FirebaseStorage.getInstance().getReference();
+        sharedPreferences = getSharedPreferences(prefFile, Context.MODE_PRIVATE);
 
         //set booking information
         booked = "available";
@@ -112,6 +118,7 @@ public class PostCar extends AppCompatActivity {
         if (validate())
         {
             loadPostCar.setMessage("Uploading image...");
+            loadPostCar.setCancelable(false);
             loadPostCar.show();
 
             final String car_id = getCarId();
@@ -181,14 +188,14 @@ public class PostCar extends AppCompatActivity {
         data.put("image_url",image_url);
         data.put("car_make",car_make);
         data.put("car_model",car_model);
-        data.put("owner_id","Owner Id goes here");
-        data.put("car_owner","Cheki Motors");
+        data.put("owner_id",sharedPreferences.getString("UserId", ""));
+        data.put("car_owner",sharedPreferences.getString("UserName",""));
         data.put("engine_size",engine_size);
         data.put("fuel_type",fuel_type);
         data.put("car_transmission",car_transmission);
         data.put("car_capacity",car_capacity);
         data.put("car_accessories",car_accessories);
-        data.put("car_rating","0");
+        data.put("car_rating","No rating");
         data.put("hire_rate",hire_rate);
         data.put("booked", booked);
 

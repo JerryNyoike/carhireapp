@@ -1,7 +1,10 @@
 package app.carhire.com.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import app.carhire.com.BuildConfig;
 import app.carhire.com.R;
 import app.carhire.com.adapters.ViewCarsAdapter;
 import app.carhire.com.models.CarModel;
@@ -30,13 +34,18 @@ import app.carhire.com.models.CarModel;
 
 public class ViewCars extends AppCompatActivity {
 
-    private TextView welcome, noAvailableCars;
+    private TextView welcome, noAvailableCars, here;
     private ListView carList;
+    private FloatingActionButton postCar;
     private ProgressBar loadCars;
     private ViewCarsAdapter carsAdapter;
     private ArrayList<CarModel> availableCars;
     private DatabaseReference rootDbRef;
     private FirebaseAuth mAuth;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedPrefEditor;
+    private String userId,userType,userName;
+    private String prefFile = BuildConfig.APPLICATION_ID + ".PREFERENCE_FILE_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +65,21 @@ public class ViewCars extends AppCompatActivity {
 
         //initialize variables
         welcome = (TextView)findViewById(R.id.welcome);
+        here = (TextView)findViewById(R.id.here_is_a_list);
         noAvailableCars = (TextView)findViewById(R.id.no_available_cars);
         carList = (ListView)findViewById(R.id.car_list);
+        postCar = (FloatingActionButton)findViewById(R.id.post_car);
         loadCars = (ProgressBar)findViewById(R.id.load_available_vehicles);
         availableCars = new ArrayList<>();
         carsAdapter = new ViewCarsAdapter(this,availableCars);
         rootDbRef = FirebaseDatabase.getInstance().getReference();
+        sharedPreferences = getSharedPreferences(prefFile,Context.MODE_PRIVATE);
+        sharedPrefEditor = sharedPreferences.edit();
+
+        //get users details from shared pref
+        userId = sharedPreferences.getString("UserId", "");
+        userType = sharedPreferences.getString("UserType", "");
+        userName = sharedPreferences.getString("UserName", "");
 
         //handle item clicks
         carList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -81,8 +99,20 @@ public class ViewCars extends AppCompatActivity {
             }
         });
 
+        postCar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(new Intent(ViewCars.this,PostCar.class)));
+            }
+        });
+
         //update ui
         carList.setAdapter(carsAdapter);
+        welcome.setText("Welcome " + userName);
+        if (userType.equals("Client"))
+        {
+            postCar.setVisibility(View.GONE);
+        }
 
         //method call
         getAvailableCars();
@@ -98,24 +128,57 @@ public class ViewCars extends AppCompatActivity {
 
                 availableCars.clear();
 
-                for (DataSnapshot ds : dataSnapshot.getChildren())
+                if (userType.equals("Client"))
                 {
-                    CarModel carModel = new CarModel();
-                    carModel.setCarId(ds.child("car_id").getValue(String.class));
-                    carModel.setImageUrl(ds.child("image_url").getValue(String.class));
-                    carModel.setCarMake(ds.child("car_make").getValue(String.class));
-                    carModel.setCarModel(ds.child("car_model").getValue(String.class));
-                    carModel.setCarOwner(ds.child("car_owner").getValue(String.class));
-                    carModel.setEngineSize(ds.child("engine_size").getValue(String.class));
-                    carModel.setCarTransmission(ds.child("car_transmission").getValue(String.class));
-                    carModel.setCarRating(ds.child("car_rating").getValue(String.class));
-                    carModel.setHireRate(ds.child("hire_rate").getValue(String.class));
-                    carModel.setBooked(ds.child("booked").getValue(String.class));
-                    //[START] select only cars that are not booked
-                    if("available".equals(carModel.getBooked())){
-                        availableCars.add(carModel);
+                    for (DataSnapshot ds : dataSnapshot.getChildren())
+                    {
+                        CarModel carModel = new CarModel();
+                        carModel.setCarId(ds.child("car_id").getValue(String.class));
+                        carModel.setImageUrl(ds.child("image_url").getValue(String.class));
+                        carModel.setCarMake(ds.child("car_make").getValue(String.class));
+                        carModel.setCarModel(ds.child("car_model").getValue(String.class));
+                        carModel.setCarOwner(ds.child("car_owner").getValue(String.class));
+                        carModel.setEngineSize(ds.child("engine_size").getValue(String.class));
+                        carModel.setCarCapacity(ds.child("car_capacity").getValue(String.class));
+                        carModel.setCarRating(ds.child("car_rating").getValue(String.class));
+                        carModel.setBooked(ds.child("booked").getValue(String.class));
+                        //[START] select only cars that are not booked
+                        if (carModel.getBooked().equals(userId))
+                        {
+                            carModel.setHireRate("You have booked this car");
+                            availableCars.add(carModel);
+                        }
+                        else if(carModel.getBooked().equals("available"))
+                        {
+                            carModel.setHireRate(ds.child("hire_rate").getValue(String.class));
+                            availableCars.add(carModel);
+                        }
+                        //[END] select only cars that are not booked
                     }
-                    //[END] select only cars that are not booked
+                }
+                else if (userType.equals("Owner"))
+                {
+                    for (DataSnapshot ds : dataSnapshot.getChildren())
+                    {
+                        CarModel carModel = new CarModel();
+                        carModel.setCarId(ds.child("car_id").getValue(String.class));
+                        carModel.setImageUrl(ds.child("image_url").getValue(String.class));
+                        carModel.setCarMake(ds.child("car_make").getValue(String.class));
+                        carModel.setCarModel(ds.child("car_model").getValue(String.class));
+                        carModel.setOwnerId(ds.child("owner_id").getValue(String.class));
+                        carModel.setCarOwner(ds.child("car_owner").getValue(String.class));
+                        carModel.setEngineSize(ds.child("engine_size").getValue(String.class));
+                        carModel.setCarCapacity(ds.child("car_capacity").getValue(String.class));
+                        carModel.setCarRating(ds.child("car_rating").getValue(String.class));
+                        carModel.setHireRate(ds.child("hire_rate").getValue(String.class));
+                        carModel.setBooked(ds.child("booked").getValue(String.class));
+                        //[START] select only cars that belong to logged in user
+                        if(carModel.getOwnerId().equals(userId)){
+                            availableCars.add(carModel);
+                        }
+                        //[END] select only cars that belong to logged in user
+                    }
+                    here.setText("Here is a list of your cars");
                 }
 
                 carsAdapter.notifyDataSetChanged();
@@ -148,13 +211,13 @@ public class ViewCars extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if (id == R.id.post_car)
+        if (id == R.id.log_out)
         {
-            startActivity(new Intent(this,PostCar.class));
-        }
-        else if (id == R.id.review_account)
-        {
-
+            mAuth.signOut();
+            sharedPrefEditor.clear();
+            sharedPrefEditor.commit();
+            startActivity(new Intent(new Intent(ViewCars.this,LoginActivity.class)).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            finish();
         }
         else if (id == R.id.exit)
         {

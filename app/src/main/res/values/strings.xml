@@ -23,4 +23,6 @@
     <string name="no_rented_vehicles">You haven\'t booked any car</string>
     <string name="some_cars">Here is a list of cars available for hire</string>
     <string name="view_car">View Car</string>
+    <string name="log_out">Log Out</string>
+    <string name="booker_details">Booker Details</string>
 </resources>

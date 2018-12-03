@@ -14,7 +14,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         app:titleTextColor="@color/white"
-        app:title="@string/book_a_car"/>
+        app:title="@string/app_name"/>
 
     <TextView
         android:id="@+id/welcome"
@@ -28,6 +28,7 @@
         android:background="@drawable/border_grey"/>
 
     <TextView
+        android:id="@+id/here_is_a_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/some_cars"
@@ -63,6 +64,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/post_car"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            app:srcCompat="@drawable/add_car_icon"
+            app:backgroundTint="@color/colorPrimary"
+            android:elevation="10dp"/>
 
     </FrameLayout>
 

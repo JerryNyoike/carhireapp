@@ -1,5 +1,6 @@
 package app.carhire.com.ui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -32,11 +34,10 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Button btnRegister;
     private EditText etUsername, etEmail, etPassword, etConfirmPwd;
+    private ProgressDialog progressDialog;
     private String userName, email, password, confirmPassword, userType;
     private Spinner spinnerUserType;
     private String[] userTypesArray = {"Owner", "Client"};
-    private SharedPreferences sharedPref;
-    private SharedPreferences.Editor editor;
 
 //    List<AuthUI.IdpConfig> providers = Arrays.asList(
 //            new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -93,6 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etUsername = findViewById(R.id.etUsername);
         spinnerUserType = findViewById(R.id.spinnerUserType);
+        progressDialog = new ProgressDialog(this);
 
         ArrayAdapter userTypeAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, userTypesArray);
         userTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -117,6 +119,9 @@ public class SignUpActivity extends AppCompatActivity {
                 //TODO show progress dialog
                 getUserData();
                 if(validatePassword()) {
+                    progressDialog.setMessage("Registering...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
                     //sign up the user
                     mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -124,20 +129,13 @@ public class SignUpActivity extends AppCompatActivity {
                             //TODO remove progress dialog
                             if(task.isSuccessful()){
                                 //write user to the database
-                                String key = mDatabaseReference.push().getKey();
-                                writeNewUser(new ClientModel(key, userName, email, userType));
-
-                                //write to shared preferences
-                                sharedPref = SignUpActivity.this.getSharedPreferences(BuildConfig.APPLICATION_ID + ".PREFERENCE_FILE_KEY",Context.MODE_PRIVATE);
-                                editor = sharedPref.edit();
-                                editor.putString("UserId", key);
-                                editor.apply();
-                                editor.putString("UserEmail", email);
-                                editor.apply();
-
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                                finish();
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if (user != null)
+                                {
+                                    writeNewUser(new ClientModel(user.getUid(), userName, email, userType));
+                                }
                             } else {
+                                progressDialog.dismiss();
                                 Toast.makeText(SignUpActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
                             }
@@ -182,6 +180,21 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void writeNewUser(ClientModel client) {
-        mDatabaseReference.child("users").child(client.getUserId()).setValue(client);
+        mDatabaseReference.child("users").child(client.getUserId()).setValue(client).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful())
+                {
+                    progressDialog.dismiss();
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    finish();
+                }
+                else
+                {
+                    progressDialog.dismiss();
+                    Toast.makeText(SignUpActivity.this, "Couldn't save your details to database", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package app.carhire.com.ui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import app.carhire.com.BuildConfig;
@@ -31,10 +33,12 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etEmail, etPassword;
     private Button btnLogin;
     private TextView tvRegister;
+    private ProgressDialog progressDialog;
     String email, password;
     private FirebaseAuth mAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private String user_id, user_type;
     private String prefFile = BuildConfig.APPLICATION_ID + ".PREFERENCE_FILE_KEY";
 
     @Override
@@ -43,20 +47,22 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         //if user is already logged in proceed
         mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser() != null){
-            startActivity(new Intent(LoginActivity.this, ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-            finish();
-        }
+
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvRegister);
-        mAuth = FirebaseAuth.getInstance();
-
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        progressDialog = new ProgressDialog(this);
 
         sharedPref = getApplicationContext().getSharedPreferences(prefFile, Context.MODE_PRIVATE);
         editor = sharedPref.edit();
+
+        if(!sharedPref.getString("UserId","").equals("")){
+            startActivity(new Intent(LoginActivity.this, ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            finish();
+        }
 
         tvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,25 +78,26 @@ public class LoginActivity extends AppCompatActivity {
                 password = etPassword.getText().toString().trim();
 
                 if(validateForm()){
+                    progressDialog.setMessage("Logging in...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
                     mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                editor.putString("UserId", getUserId());
-                                editor.apply();
-                                editor.putString("UserEmail", email);
-                                editor.apply();
+                                if (user != null)
+                                {
+                                    getUserDetails(user.getUid());
+                                }
 
-                                startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                                finish();
                             } else {
                                 // If sign in fails, display a message to the user.
+                                progressDialog.dismiss();
                                 Toast.makeText(LoginActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
                             }
-
                         }
                     });
                 }
@@ -117,16 +124,21 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private String getUserId(){
-        final String[] uid = new String[1];
+    private void getUserDetails(final String u_id){
+
         ValueEventListener postListener = new ValueEventListener() {
-            String userId;
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                String key = mDatabaseReference.push().getKey();
-                userId = dataSnapshot.child("user").child(key).getValue(String.class);
-                uid[0] = userId;
+                editor.putString("UserId", u_id);
+                editor.putString("UserEmail", email);
+                editor.putString("UserName", dataSnapshot.child("username").getValue(String.class));
+                editor.putString("UserType", dataSnapshot.child("userType").getValue(String.class));
+                editor.apply();
+                progressDialog.dismiss();
+                startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                finish();
                 // ...
             }
 
@@ -135,8 +147,9 @@ public class LoginActivity extends AppCompatActivity {
                 // Getting Post failed, log a message
 //                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
                 // ...
+                progressDialog.dismiss();
             }
         };
-        return uid[0];
+        mDatabaseReference.child("users").child(u_id).addValueEventListener(postListener);
     }
 }

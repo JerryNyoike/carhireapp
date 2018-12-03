@@ -13,6 +13,7 @@ public class ClientModel {
 
     public ClientModel(String userId, String userName, String email, String userType){
         this.setEmail(email);
+        this.setUsername(userName);
         this.setUserId(userId);
         this.setUserType(userType);
     }

@@ -3,14 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/post_car"
-        android:title="@string/review_account"
-        android:icon="@drawable/ic_action_add"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/review_account"
-        android:title="@string/review_account"
+        android:id="@+id/log_out"
+        android:title="@string/log_out"
         app:showAsAction="never"/>
 
     <item

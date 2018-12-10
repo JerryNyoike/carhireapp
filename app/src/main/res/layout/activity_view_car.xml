@@ -29,54 +29,49 @@
             android:background="@drawable/border_grey"
             android:scaleType="centerCrop"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:layout_marginTop="222dp"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <ProgressBar
+                android:id="@+id/load_car_details"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="222dp"
-                android:padding="10dp">
+                android:layout_marginBottom="0dp">
 
-                <ProgressBar
-                    android:id="@+id/return_car_progressbar"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center" />
-
-                <ProgressBar
-                    android:id="@+id/load_car_details"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"/>
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/booker_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:background="@drawable/border_grey"
+                    android:gravity="start|center"
+                    android:paddingStart="12dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/booker_details"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/booker_details"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/booker_details"
-                        android:textColor="@color/colorPrimaryText"
-                        android:textSize="16sp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:gravity="start|center"
-                        android:background="@drawable/border_grey"
-                        android:visibility="gone"/>
-
-                    <ListView
-                        android:id="@+id/car_details_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_margin="0dp"/>
-
-                </LinearLayout>
+                <ListView
+                    android:id="@+id/car_details_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_margin="0dp" />
 
             </LinearLayout>
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/return_car"

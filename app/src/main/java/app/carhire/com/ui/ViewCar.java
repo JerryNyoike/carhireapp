@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -27,8 +28,6 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,19 +38,18 @@ import java.util.ArrayList;
 
 import app.carhire.com.BuildConfig;
 import app.carhire.com.R;
-
-import static java.lang.Boolean.TRUE;
+import app.carhire.com.ui.Fragments.BookingFragment;
 
 public class ViewCar extends AppCompatActivity {
 
     private ImageView displayImage;
     private FloatingActionButton bookCar;
-    private ProgressBar loadCarDetails, returnCarProgress;
+    private ProgressBar loadCarDetails;
     private TextView bookerDetails;
     private ListView carDetailsList;
     private Button returnVehicle;
     private DatabaseReference rootDbRef;
-    private String user_id,car_id, owner_id, image_url,booker_id;
+    private String user_id,car_id, owner_id, image_url, booker_id, userAddress, phoneNumber;
     private ArrayList<String> carDetails;
     private ArrayAdapter<String> adapter;
     private SharedPreferences sharedPref;
@@ -71,6 +69,9 @@ public class ViewCar extends AppCompatActivity {
         //get userId from SharedPreferences
         sharedPref = getApplicationContext().getSharedPreferences(prefFile, Context.MODE_PRIVATE);
         user_id = sharedPref.getString("UserId", null);
+        userAddress = sharedPref.getString("Address", null);
+        phoneNumber = sharedPref.getString("Phone number", null);
+
 
         //set up toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -80,7 +81,6 @@ public class ViewCar extends AppCompatActivity {
         //initialize variables
         displayImage = (ImageView) findViewById(R.id.display_image);
         loadCarDetails = (ProgressBar) findViewById(R.id.load_car_details);
-        returnCarProgress = (ProgressBar) findViewById(R.id.return_car_progressbar);
         bookerDetails = (TextView)findViewById(R.id.booker_details);
         carDetailsList = (ListView) findViewById(R.id.car_details_list);
         bookCar = (FloatingActionButton) findViewById(R.id.book_car);
@@ -90,7 +90,11 @@ public class ViewCar extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,carDetails);
 
         returnVehicle.setVisibility(View.GONE);
-        returnCarProgress.setVisibility(View.GONE);
+
+        //get users details in case they book a vehicle
+        if(userAddress == null || phoneNumber == null){
+            showDetailsDialog();
+        }
 
 
         //handle item clicks
@@ -115,17 +119,18 @@ public class ViewCar extends AppCompatActivity {
                         }
                     }
                 });
+
             }
         });
 
         returnVehicle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                returnCarProgress.setVisibility(View.VISIBLE);
+                loadCarDetails.setVisibility(View.VISIBLE);
                 rootDbRef.child("cars").child(car_id).child("booked").setValue("available").addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        returnCarProgress.setVisibility(View.GONE);
+                        loadCarDetails.setVisibility(View.GONE);
                         loadCarDetails.setVisibility(View.GONE);
                         if (task.isSuccessful())
                         {
@@ -253,9 +258,10 @@ public class ViewCar extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    String booker_details = "This car was booked by : \n";
-                    booker_details += "Username : " + dataSnapshot.child("username").getValue(String.class) + "\n";
+                    String booker_details = "This car was booked by :" + dataSnapshot.child("username").getValue(String.class) + "\n";
                     booker_details += "Email : " + dataSnapshot.child("email").getValue(String.class);
+                    booker_details += "Address : " + sharedPref.getString("Address", "Address not available");
+                    booker_details += "Number : " + sharedPref.getString("Phone number", "Phone number not available");
 
                     bookerDetails.setVisibility(View.VISIBLE);
                     bookerDetails.setText(booker_details);
@@ -280,5 +286,10 @@ public class ViewCar extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    public void showDetailsDialog(){
+        DialogFragment details = new BookingFragment();
+        details.show(getSupportFragmentManager(), "Details");
     }
 }

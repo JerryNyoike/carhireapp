@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -45,9 +46,10 @@ public class ViewCar extends AppCompatActivity {
 
     private ImageView displayImage;
     private FloatingActionButton bookCar;
-    private ProgressBar loadCarDetails;
+    private ProgressBar loadCarDetails, returnCarProgress;
     private TextView bookerDetails;
     private ListView carDetailsList;
+    private Button returnVehicle;
     private DatabaseReference rootDbRef;
     private String user_id,car_id, owner_id, image_url,booker_id;
     private ArrayList<String> carDetails;
@@ -65,6 +67,7 @@ public class ViewCar extends AppCompatActivity {
         owner_id = getIntent().getExtras().getString("owner_id");
         image_url = getIntent().getExtras().getString("image_url");
 
+
         //get userId from SharedPreferences
         sharedPref = getApplicationContext().getSharedPreferences(prefFile, Context.MODE_PRIVATE);
         user_id = sharedPref.getString("UserId", null);
@@ -77,12 +80,17 @@ public class ViewCar extends AppCompatActivity {
         //initialize variables
         displayImage = (ImageView) findViewById(R.id.display_image);
         loadCarDetails = (ProgressBar) findViewById(R.id.load_car_details);
+        returnCarProgress = (ProgressBar) findViewById(R.id.return_car_progressbar);
         bookerDetails = (TextView)findViewById(R.id.booker_details);
         carDetailsList = (ListView) findViewById(R.id.car_details_list);
         bookCar = (FloatingActionButton) findViewById(R.id.book_car);
+        returnVehicle = findViewById(R.id.return_car);
         rootDbRef = FirebaseDatabase.getInstance().getReference();
         carDetails = new ArrayList<String>();
         adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,carDetails);
+
+        returnVehicle.setVisibility(View.GONE);
+        returnCarProgress.setVisibility(View.GONE);
 
 
         //handle item clicks
@@ -104,6 +112,29 @@ public class ViewCar extends AppCompatActivity {
                         else
                         {
                             Toast.makeText(ViewCar.this, "Could'nt book car.Try again", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+
+        returnVehicle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                returnCarProgress.setVisibility(View.VISIBLE);
+                rootDbRef.child("cars").child(car_id).child("booked").setValue("available").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        returnCarProgress.setVisibility(View.GONE);
+                        loadCarDetails.setVisibility(View.GONE);
+                        if (task.isSuccessful())
+                        {
+                            Toast.makeText(ViewCar.this, "Car successfully returned", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), ViewCars.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        }
+                        else
+                        {
+                            Toast.makeText(ViewCar.this, "Could'nt return vehocle. Try again later", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -181,6 +212,9 @@ public class ViewCar extends AppCompatActivity {
                     //check if current user has booked the car
                     if (bookedStatus.equals(user_id))
                     {
+                        returnVehicle.setEnabled(true);
+                        returnVehicle.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                        returnVehicle.setVisibility(View.VISIBLE);
                         bookCar.setVisibility(View.GONE);
                         carDetails.add("**You have booked this car**");
                     }
@@ -188,6 +222,9 @@ public class ViewCar extends AppCompatActivity {
                     //check if the car is available for booking
                     if (bookedStatus.equals("available"))
                     {
+                        returnVehicle.setEnabled(false);
+                        returnVehicle.setBackgroundColor(getResources().getColor(R.color.grey));
+                        returnVehicle.setVisibility(View.VISIBLE);
                         carDetails.add("Booked Status: " + bookedStatus);
                     }
                 }

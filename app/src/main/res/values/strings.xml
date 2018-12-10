@@ -25,4 +25,5 @@
     <string name="view_car">View Car</string>
     <string name="log_out">Log Out</string>
     <string name="booker_details">Booker Details</string>
+    <string name="return_vehicle">Return Vehicle</string>
 </resources>

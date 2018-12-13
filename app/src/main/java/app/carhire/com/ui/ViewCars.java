@@ -93,6 +93,7 @@ public class ViewCars extends AppCompatActivity {
                 Intent viewCar = new Intent(ViewCars.this, ViewCar.class);
                 viewCar.putExtra("car_id",car_id);
                 viewCar.putExtra("owner_id",owner_id);
+                viewCar.putExtra("user_type",userType);
                 viewCar.putExtra("image_url",image_url);
                 startActivity(viewCar);
 
@@ -109,7 +110,7 @@ public class ViewCars extends AppCompatActivity {
         //update ui
         carList.setAdapter(carsAdapter);
         welcome.setText("Welcome " + userName);
-        if (userType.equals("Client"))
+        if (userType.equals("Client") || userType.equals("Admin"))
         {
             postCar.setVisibility(View.GONE);
         }
@@ -179,6 +180,29 @@ public class ViewCars extends AppCompatActivity {
                         //[END] select only cars that belong to logged in user
                     }
                     here.setText("Here is a list of your cars");
+                } else if (userType.equals("Admin")){
+                    for (DataSnapshot ds : dataSnapshot.getChildren())
+                    {
+
+                        CarModel carModel = new CarModel();
+                        carModel.setCarId(ds.child("car_id").getValue(String.class));
+                        carModel.setImageUrl(ds.child("image_url").getValue(String.class));
+                        carModel.setCarMake(ds.child("car_make").getValue(String.class));
+                        carModel.setCarModel(ds.child("car_model").getValue(String.class));
+                        carModel.setOwnerId(ds.child("owner_id").getValue(String.class));
+                        carModel.setCarOwner(ds.child("car_owner").getValue(String.class));
+                        carModel.setEngineSize(ds.child("engine_size").getValue(String.class));
+                        carModel.setCarCapacity(ds.child("car_capacity").getValue(String.class));
+                        carModel.setCarRating(ds.child("car_rating").getValue(String.class));
+                        carModel.setHireRate(ds.child("hire_rate").getValue(String.class));
+                        carModel.setBooked(ds.child("booked").getValue(String.class));
+                        //[START] select only cars that have been booked
+                        if(!carModel.getBooked().equals("available")){
+                            availableCars.add(carModel);
+                        }
+                        //[END] select only cars that have been booked
+                    }
+                    here.setText("These are the booked cars");
                 }
 
                 carsAdapter.notifyDataSetChanged();

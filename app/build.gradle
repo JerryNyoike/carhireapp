@@ -39,6 +39,7 @@ dependencies {
         exclude group: "com.android.support"
     }
     //noinspection UseOfBundledGooglePlayServices
+    implementation "com.google.firebase:firebase-iid:12.0.1"
     implementation 'com.google.android.gms:play-services:12.0.1'
     implementation 'com.firebaseui:firebase-ui-auth:4.2.0'
 }

@@ -49,7 +49,7 @@ public class ViewCar extends AppCompatActivity {
     private ListView carDetailsList;
     private Button returnVehicle;
     private DatabaseReference rootDbRef;
-    private String user_id,car_id, owner_id, image_url, booker_id, userAddress, phoneNumber;
+    private String user_id,car_id, owner_id, image_url, user_type, booker_id, userAddress, phoneNumber;
     private ArrayList<String> carDetails;
     private ArrayAdapter<String> adapter;
     private SharedPreferences sharedPref;
@@ -62,6 +62,7 @@ public class ViewCar extends AppCompatActivity {
 
         //get extras from intent
         car_id = getIntent().getExtras().getString("car_id");
+        user_type = getIntent().getExtras().getString("user_type");
         owner_id = getIntent().getExtras().getString("owner_id");
         image_url = getIntent().getExtras().getString("image_url");
 
@@ -92,10 +93,11 @@ public class ViewCar extends AppCompatActivity {
         returnVehicle.setVisibility(View.GONE);
 
         //get users details in case they book a vehicle
-        if(userAddress == null || phoneNumber == null){
-            showDetailsDialog();
+        if(user_type.equals("Client")){
+            if(userAddress == null || phoneNumber == null){
+                showDetailsDialog();
+            }
         }
-
 
         //handle item clicks
         bookCar.setOnClickListener(new View.OnClickListener(){
@@ -170,7 +172,7 @@ public class ViewCar extends AppCompatActivity {
 
         carDetailsList.setAdapter(adapter);
 
-        if(user_id.equals(owner_id))
+        if(user_id.equals(owner_id) || user_type.equals("Admin"))
         {
             bookCar.setVisibility(View.GONE);
         }
@@ -208,7 +210,7 @@ public class ViewCar extends AppCompatActivity {
                 {
                     //check if the car is owned by current user
                     //and if it is booked to show booker details
-                    if (user_id.equals(owner_id) && !bookedStatus.equals("available"))
+                    if ((user_id.equals(owner_id) || user_type.equals("Admin")) && !bookedStatus.equals("available"))
                     {
                         booker_id = bookedStatus;
                         getBookerDetails();

@@ -37,7 +37,7 @@ public class SignUpActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private String userName, email, password, confirmPassword, userType;
     private Spinner spinnerUserType;
-    private String[] userTypesArray = {"Owner", "Client", "Admin"};
+    private String[] userTypesArray = {"Owner", "Client"};
 
 //    List<AuthUI.IdpConfig> providers = Arrays.asList(
 //            new AuthUI.IdpConfig.EmailBuilder().build(),
